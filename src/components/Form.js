@@ -1,13 +1,36 @@
-import { useState } from "react"; //Importing useState hook for managing component's state
+import { useState, useEffect, useRef } from "react"; //Importing useState hook for managing component's state
 import React from "react";
 import CalculateGPA from "./CalculateGPA"; //Import the CGPA logic
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement, // Ensure this is added
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
+// Register the necessary components for Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement, // Ensure this is added
+  Title,
+  Tooltip,
+  Legend
+);
+
+//Main App component
 export default function Form() {
+  const chartRef = useRef(null); // Define the chartRef
   //State to hold the course
   const [courses, setCourses] = useState([
     { courseName: "", grade: "", creditUnit: "" }, //Initializing state with an empty course row
   ]);
   const [gpa, setGpa] = useState(null); //State for storing the calculated GPA
+  const [chartData, setChartData] = useState(null); // State for storing chart data
 
   function addCourseRow() {
     setCourses([...courses, { courseName: "", grade: "", creditUnit: "" }]); //Adds a new course row
@@ -76,7 +99,32 @@ export default function Form() {
     // Round the GPA to two decimal places
     const roundedGPA = calculateGPA.toFixed(2);
     setGpa(roundedGPA); // Set the calculated GPA
+
+    // Set up the chart data to visualize the GPA
+
+    const chartData = {
+      labels: ["GPA"],
+      datasets: [
+        {
+          label: "Your GPA",
+          data: [roundedGPA], // Pass GPA value as data for the chart
+          backgroundColor: "rgba(75, 192, 192, 0.6)", // Bar color
+          borderColor: "rgba(75, 192, 192, 1)", // Border color
+          borderWidth: 1,
+        },
+      ],
+    };
+    setChartData(chartData); // Set the chart data state
   };
+
+  // Clean up chart when the component is unmounted
+  useEffect(() => {
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy(); // Destroy the chart when the component is unmounted
+      }
+    };
+  }, []);
 
   return (
     <div>
@@ -143,7 +191,14 @@ export default function Form() {
       {/* GPA result display */}
       {gpa !== null && (
         <div>
-          <h3>Your GPA: {gpa}</h3>
+          <h3>Your GPA: {gpa}</h3>{" "}
+          {gpa !== null && (
+            <Bar
+              ref={chartRef}
+              data={chartData}
+              options={{ responsive: true }}
+            />
+          )}
         </div>
       )}
     </div>
