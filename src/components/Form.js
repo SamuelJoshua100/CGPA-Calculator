@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react"; //Importing useState hook for managing component's state
 import React from "react";
+import Header from "./Header";
 import CalculateGPA from "./CalculateGPA"; //Import the CGPA logic
 import { Bar } from "react-chartjs-2";
 import {
@@ -127,15 +128,24 @@ export default function Form() {
   }, []);
 
   return (
-    <div>
-      <h2>Enter your Courses</h2> {/*Form title */}
-      <form onSubmit={handleSubmit}>
+    <div className="h-screen w-full min-h-screen bg-gray-100 flex items-center justify-center p-4 flex-col">
+      <Header />
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        {" "}
+        Enter your Courses
+      </h2>{" "}
+      {/*Form title */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex items-center justify-center p-4 flex-row"
+      >
         {courses.map((course, index) => (
           <div key={index}>
             <input
               type="text"
               name="courseName"
               placeholder="Course Name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               value={course.courseName}
               onChange={(e) => handleInput(index, e)}
             />
@@ -143,6 +153,7 @@ export default function Form() {
             {/* Grade Dropbox selection */}
             <select
               name="grade"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               value={course.grade}
               onChange={(e) => handleInput(index, e)}
             >
@@ -162,12 +173,17 @@ export default function Form() {
               placeholder="Credit Unit"
               min="0" // Minimum value
               max="5" // Maximum value
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               value={course.creditUnit}
               onChange={(e) => handleInput(index, e)}
             />
 
             {/*Remove Course Row button */}
-            <button type="button" onClick={() => removeCourseRow(index)}>
+            <button
+              type="button"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors"
+              onClick={() => removeCourseRow(index)}
+            >
               Remove
             </button>
           </div>
